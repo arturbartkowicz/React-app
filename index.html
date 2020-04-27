@@ -83,10 +83,10 @@
       );
     }
 
-    function Clock({ className = '', hours = 3, minutes = 7, seconds = 0 }) {
+    function Clock({ className = '', minutes = 7, seconds = 0 }) {
       return (
         <h2 className={"Clock " + className}>
-          Pozostało {hours}:{minutes}:{seconds}
+          Pozostało {minutes}:{seconds}
         </h2>
       );
     }
@@ -114,9 +114,9 @@
       }
       handleStart(event){
         this.setState({
-          isRunning: true,
-          elapsedTimeInSeconds: 15*60 + 25
+          isRunning: true
         })
+        this.startTimer();
       }
       handleStop(event){    //nasz przycisk stop to taki reset. Powinien wyłączyć odliczanie czasu, wyjść z aktualnie trwającej pauzy i zresetować ilość pauz
         this.setState({
@@ -125,11 +125,34 @@
           pausesCount: 0, 
           elapsedTimeInSeconds: 0
         })
+        this.stopTimer();
       }
+      
+      startTimer(){
+        this.intervalId = window.setInterval(
+          ()=>{
+            this.setState(
+              (prevState)=>({elapsedTimeInSeconds: prevState.elapsedTimeInSeconds + 0.01})
+            )
+          },
+          10
+        )
+      }
+
+      stopTimer(){
+        window.clearInterval(this.intervalId);
+      }
+    
       tooglePause(){
         this.setState(
           function(prevState){
             const isPaused = !prevState.isPaused;
+            if (isPaused){
+              this.stopTimer();
+            } 
+            else{
+              this.startTimer();
+            }
             return {
               isPaused,
               pausesCount: isPaused ? prevState.pausesCount + 1 : prevState.pausesCount 
@@ -139,7 +162,7 @@
       }
       render() {
         const {isRunning, isPaused, pausesCount, elapsedTimeInSeconds} = this.state;
-        const totalTimeInSeconds = 30*60;  //zmienna lokalna reprezentująca calkowity czas w suekundach
+        const totalTimeInSeconds = 25;  //zmienna lokalna reprezentująca calkowity czas w suekundach
         const timeLeftInSeconds = totalTimeInSeconds - elapsedTimeInSeconds; //ile czasu zostało nam w sekundach
         const minutesLeft = Math.floor(timeLeftInSeconds/60); //ile pelnych minut nam zostało zaokrąglając w dół wynik z dzielenia pozostałego czasu w sekundach przez 60
         const secondsLeft = Math.floor(timeLeftInSeconds%60); //zaokrąglamy resztę z dzielenia pozostałego czasu w sekundach
