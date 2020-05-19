@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React tydzień 2</title>
+    <script
+      src="https://unpkg.com/react@16/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      .App {
+        font-family: sans-serif;
+      }
+      .TimeboxEditor {
+        border: 1px solid black;
+        border-radius: 5px;
+        padding: 30px;
+      }
+      .Timebox {
+        border: 1px solid black;
+        border-radius: 5px;
+        padding: 30px;
+      }
+      .ProgressBar {
+        border: 1px solid black;
+        height: 20px;
+        margin-bottom: 20px;
+      }
+      .ProgressBar > div {
+        height: 100%;
+        background-color: aqua;
+      }
+      .inactive {
+        filter: blur(2px);
+      }
+      .clock {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Próbuję sam zrobić apkę raz jeszcze</h1>
+    <hr />
+    <div id="root"></div>
+  </body>
+
+  <script type="text/babel">
+    function TimeboxEditor() {
+      return (
+        <div className="TimeboxEditor inactive">
+          <label>
+            Co robisz?
+            <input
+              type="text"
+              disabled
+              value="Wpisz co by chciał dzisiaj zrobić"
+            />
+          </label>
+          <br />
+          <label>
+            Ile minut?
+            <input
+              type="text"
+              disabled
+              value="Wpisz ile minut miaby Ci to zająć"
+            />
+          </label>
+          <br />
+          <button disabled>Start</button>
+        </div>
+      );
+    }
+
+    function Clock({className='', minutes = 20, seconds = 40 }) {
+      return (
+        <h2 className={"clock " + className}>
+          Pozostało {minutes} : {seconds}
+        </h2>
+      );
+    }
+    function ProgressBar({className='', percent = 50 }) {
+      return (
+        <div className={"ProgressBar " + className}>
+          <div style={{ width: `${percent}%` }}></div>
+        </div>
+      );
+    }
+
+    class TimeBox extends React.Component {
+      constructor(props){
+        super(props);
+        this.state = {
+          isRuning: false,
+          isPaused: false,
+          pausesCount: 0
+        }
+      }
+
+      handleStart(event){
+        this.setState({
+          isRuning: true
+        })
+      }
+
+      handleStop(event) {
+        this.setState({
+          isRuning: false,
+          isPaused: true,
+          pausesCount: 0
+        })
+      }
+
+      tooglePause() {
+        this.setState(
+          function(prevState){
+            return {
+              isPaused: !prevState.isPaused
+            }
+          }
+        )
+      }
+
+      render() {
+        const { isRuning, isPaused, pausesCount } = this.state;
+        return (
+          <div className="Timebox">
+            <h1>Wpisz co byś chciał dzisiaj zrobić</h1>
+            <Clock className={ isPaused ? "inactive" : ''}/>
+            <ProgressBar className={ isPaused ? "inactive" : ''}/>
+            <button onClick={this.handleStart.bind(this)} disabled={isRuning}>Start</button>
+            <button onClick={this.handleStop.bind(this)} disabled={!isRuning}>Stop</button>
+            <button onClick={this.tooglePause.bind(this)} disabled={!isRuning}>{isPaused ? "Wznów" : "Przerwij"}</button>
+            Liczba przerw: {pausesCount}
+          </div>
+        );
+      }
+    }
+
+    function App() {
+      return (
+        <div className="App">
+          <TimeboxEditor />
+          <TimeBox />
+        </div>
+      );
+    }
+    ReactDOM.render(<App />, document.getElementById("root"));
+  </script>
+</html>
