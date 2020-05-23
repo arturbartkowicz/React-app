@@ -65,48 +65,39 @@
     <div id="root"></div>
   </body>
   <script type="text/babel">
-    class TimeboxEditor extends React.Component {
-      state = {
-        title: "Uczę się nowych rzeczy",
-        totalTimeInMinutes: 15,
-      };
 
-      handleTitleChange = (event) => {
-        this.setState({ title: event.target.value });
-      };
-
-      handleTotalTimeInMinutes = (event) => {
-        this.setState({ totalTimeInMinutes: event.target.value });
-      };
-
-      render() {
-        const { title, totalTimeInMinutes } = this.state;
-        return (
-          <div className="TimeboxEditor">
-            <label>
-              Co robisz?
-              <input
-                disabled={false}
-                value={title}
-                onChange={this.handleTitleChange}
-                type="text"
-              />
-            </label>
-            <br />
-            <label>
-              Ile minut?
-              <input
-                disabled={false}
-                value={totalTimeInMinutes}
-                onChange={this.handleTotalTimeInMinutes}
-                type="number"
-              />
-            </label>
-            <br />
-            <button>Zacznij</button>
-          </div>
-        );
-      }
+    function TimeboxEditor(props) {
+      const { 
+        title,
+        totalTimeInMinutes,
+        onTitleChange,
+        onTotalTimeInMinutes
+        } = props;
+      return (
+        <div className="TimeboxEditor">
+          <label>
+            Co robisz?
+            <input
+              disabled={false}
+              value={title}
+              onChange={onTitleChange}
+              type="text"
+            />
+          </label>
+          <br />
+          <label>
+            Ile minut?
+            <input
+              disabled={false}
+              value={totalTimeInMinutes}
+              onChange={onTotalTimeInMinutes}
+              type="number"
+            />
+          </label>
+          <br />
+          <button>Zacznij</button>
+        </div>
+      );
     }
 
     function Clock({ className = "", minutes = 7, seconds = 0 }) {
@@ -226,14 +217,25 @@
 
     class EditableTimebox extends React.Component {
       state = {
-        title: "Uczę się wyciągaćdfv stan w górę",
-        totalTimeInMinutes: 34,
+        title: "Uczę się wyciągać stan w górę",
+        totalTimeInMinutes: 5,
+      };
+      handleTitleChange = (event) => {
+        this.setState({ title: event.target.value });
+      };
+      handleTotalTimeInMinutes = (event) => {
+        this.setState({ totalTimeInMinutes: event.target.value });
       };
       render() {
         const { title, totalTimeInMinutes } = this.state;
         return (
           <>
-            <TimeboxEditor />
+            <TimeboxEditor
+              title={title}
+              totalTimeInMinutes={totalTimeInMinutes}
+              onTitleChange={this.handleTitleChange}
+              onTotalTimeInMinutes={this.handleTotalTimeInMinutes}
+            />
             <Timebox title={title} totalTimeInMinutes={totalTimeInMinutes} />
           </>
         );
